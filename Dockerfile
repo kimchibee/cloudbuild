@@ -7,5 +7,8 @@ COPY requirements.txt /tmp/
 RUN pip install -U pip
 RUN pip install -r /tmp/requirements.txt
 
+EXPOSE 80
 # copy over our app code
-COPY . /app
+COPY ./app.py /app
+WORKDIR /app
+CMD ["python", "app.py"]
