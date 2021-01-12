@@ -23,7 +23,7 @@ def getcode():
 
 @app.route("/")
 def welcome():
-    return "Cloud Build CI/CD Complete "
+    return "Cloud Build CI/CD test version.2 "
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True,port=80)
