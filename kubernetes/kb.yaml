@@ -2,14 +2,14 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   labels:
-    app: nginx-1
-  name: nginx-1
+    app: nginx-3
+  name: nginx-3
   namespace: default
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: nginx-1
+      app: nginx-3
   strategy:
     rollingUpdate:
       maxSurge: 25%
@@ -18,19 +18,30 @@ spec:
   template:
     metadata:
       labels:
-        app: nginx-1
+        app: nginx-3
     spec:
       containers:
-        - image: gcr.io/kb-daas-dev/github.com/kimchibee/cloudbuild
+        - env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: PORT
+                  name: nginx-3-config-z8vf
+            - name: app
+              valueFrom:
+                configMapKeyRef:
+                  key: app
+                  name: nginx-3-config-z8vf
+          image: gcr.io/kb-daas-dev/github.com/kimchibee/cloudbuild
           imagePullPolicy: IfNotPresent
-          name: cloudbuild-1
+          name: cloudbuild-sha256-1
 ---
 apiVersion: autoscaling/v2beta1
 kind: HorizontalPodAutoscaler
 metadata:
   labels:
-    app: nginx-1
-  name: nginx-1-hpa-wm3h
+    app: nginx-3
+  name: nginx-3-hpa-i5c1
   namespace: default
 spec:
   maxReplicas: 5
@@ -43,4 +54,26 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: nginx-1
+    name: nginx-3
+---
+apiVersion: v1
+kind: Service
+metadata:
+  finalizers:
+    - service.kubernetes.io/load-balancer-cleanup
+  labels:
+    app: nginx-3
+  name: nginx-3-service
+  namespace: default
+spec:
+  clusterIP: 10.96.0.179
+  externalTrafficPolicy: Cluster
+  ports:
+    - nodePort: 32528
+      port: 80
+      protocol: TCP
+      targetPort: 80
+  selector:
+    app: nginx-3
+  sessionAffinity: None
+  type: LoadBalancer
