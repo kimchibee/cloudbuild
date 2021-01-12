@@ -21,7 +21,13 @@ spec:
         app: nginx-1
     spec:
       containers:
-        - image: gcr.io/cskim-int-20200422/github.com/kimchibee/cloudbuild
+        - env:
+            - name: PORT
+              valueFrom:
+                configMapKeyRef:
+                  key: PORT
+                  name: nginx-1-config-xlkk
+          image: gcr.io/cskim-int-20200422/github.com/kimchibee/cloudbuild
           imagePullPolicy: IfNotPresent
           name: cloudbuild-1
 ---
@@ -30,7 +36,7 @@ kind: HorizontalPodAutoscaler
 metadata:
   labels:
     app: nginx-1
-  name: nginx-1-hpa-avvj
+  name: nginx-1-hpa-nxkv
   namespace: default
 spec:
   maxReplicas: 5
@@ -55,10 +61,10 @@ metadata:
   name: nginx-1-service
   namespace: default
 spec:
-  clusterIP: 10.104.0.50
+  clusterIP: 10.64.11.23
   externalTrafficPolicy: Cluster
   ports:
-    - nodePort: 30856
+    - nodePort: 31662
       port: 80
       protocol: TCP
       targetPort: 80
